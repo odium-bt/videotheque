@@ -10,7 +10,6 @@ public class Videotheque implements GestionVideotheque {
     private ArrayList<Video> videos = new ArrayList<>();
 
     public Videotheque() {
-
     }
 
     @Override
@@ -21,13 +20,6 @@ public class Videotheque implements GestionVideotheque {
                 throw new VideoDejaExistanteException("Cette vidéo existe déjà");
             }
         }
-        if (v instanceof FichierVideo) {
-            FichierVideo f = (FichierVideo) v;
-            File fichier = new File(f.getChemin());
-            if (!fichier.exists()) {
-                throw new SaisieInvalideException("Le fichier n'existe pas");
-            }
-        }
         videos.add(v);
     }
 
@@ -36,8 +28,22 @@ public class Videotheque implements GestionVideotheque {
         if (videos.isEmpty()) {
             throw new VideothequeVideException("La vidéothèque est vide");
         }
+        int c = 1;
         for (Video video : videos) {
-            System.out.println(video);
+            System.out.println("=== Vidéo " + c + " ===");
+            System.out.println("Titre : " + video.getTitre());
+            System.out.println("Réalisateur : " + video.getRealisateur());
+            System.out.println("Date de sortie : " + video.getDateSortie());
+            System.out.println("Durée : " + video.getDuree());
+            if (video instanceof Dvd) {
+                System.out.println("Numéro : " + ((Dvd) video).getNumero());
+                System.out.println("Zone : " + ((Dvd) video).getNumero());
+            } else if (video instanceof FichierVideo) {
+                System.out.println("Chemin : media/" + ((FichierVideo) video).getNomFichier());
+                System.out.println("Taille : " + ((FichierVideo) video).getTaille());
+            }
+            System.out.println();
+            c++;
         }
     }
 
@@ -67,7 +73,11 @@ public class Videotheque implements GestionVideotheque {
             throws VideoIntrouvableException, VideothequeVideException,
             LectureImpossibleException {
         Video video = rechercherVideo(titre);
-        video.lire();
+        if (video instanceof FichierVideo) {
+            ((FichierVideo) video).lire();
+        } else {
+            throw new LectureImpossibleException("Cette vidéo n'est pas un fichier");
+        }
     }
 
     @Override
@@ -75,10 +85,10 @@ public class Videotheque implements GestionVideotheque {
             throws VideoIntrouvableException, VideothequeVideException,
             ConversionImpossibleException, SaisieInvalideException, IOException, InterruptedException {
         Video v = rechercherVideo(titre);
-        if (!(v instanceof Convertible)) {
+        if (v == null) {
             throw new ConversionImpossibleException("Conversion impossible");
         }
-        Convertible c = (Convertible) v;
+        Convertible c = v;
         FichierVideo fv = c.convertir(formatCible);
         int index = videos.indexOf(v);
         videos.set(index, fv);

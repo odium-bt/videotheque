@@ -1,10 +1,12 @@
 package application;
 
 import exceptions.SaisieInvalideException;
+import exceptions.VideoDejaExistanteException;
+import exceptions.VideoIntrouvableException;
 import exceptions.VideothequeVideException;
+import modele.*;
 import modele.FichierVideo;
 
-import modele.Videotheque;
 import modele.Videotheque;
 import exceptions.*;
 
@@ -16,12 +18,13 @@ import java.util.Scanner;
 
 public class Controller {
     static Scanner scan = new Scanner(System.in);
-    static Videotheque videotheque = new Videotheque();
+    private final Videotheque videotheque = new Videotheque();
+
     /**
      * Affiche le menu principal
      */
     public int afficherMenu() {
-        System.out.println("===== GESTION DE LA VIDEOTHEQUE =====");
+        System.out.println("========== VIDÉOTHÈQUE ==========");
         System.out.println("1. Ajouter une vidéo");
         System.out.println("2. Lister toutes les vidéos");
         System.out.println("3. Rechercher une vidéo");
@@ -29,6 +32,7 @@ public class Controller {
         System.out.println("5. Lire une vidéo");
         System.out.println("6. Convertir une vidéo");
         System.out.println("0. Quitter");
+        System.out.println("=================================");
         System.out.print("Votre choix : ");
         try {
             return Controller.scan.nextInt();
@@ -124,44 +128,72 @@ public class Controller {
 
     public String saisieFormat(String msg) throws SaisieInvalideException {
         String f = saisieStr(msg).toLowerCase();
-        if (!f.equals("mp4") && !f.equals("avi")){
-            throw new SaisieInvalideException("Donnée entrée invalide");
+        if (!f.equals("mp4") && !f.equals("avi")) {
+            System.out.println("Format entré invalide.");
+            f = saisieFormat(msg);
         }
+        return f;
     }
 
-    public void ajouterVideo() throws SaisieInvalideException {
+    public void ajouterVideo() throws SaisieInvalideException, VideoDejaExistanteException {
         int support = saisieSupport();
         String titre = saisieStr("Titre : ");
         String auteur = saisieStr("Réalisateur : ");
         LocalDate date = saisieDate();
-        String chemin = saisieStr("Chemin du fichier : ");
+        int duree = saisieDuree();
 
-        String num;
+        // Spécifique aux fichiers
+        String chemin;
+        int taille;
 
-        FichierVideo v = null;
+        Video v;
 
-        // GestionVideotheque.creerVideo(v);
-    }
+        switch (support) {
+            case 1:
+                String numero = saisieStr("Numéro : ");
+                int zone = saisieInt("Zone : ");
+                v = new Dvd(titre, auteur, date, duree, numero, zone);
+                break;
+            case 2:
+                chemin = saisieStr("Nom du fichier (ex : video.mp4) : ");
+                taille = saisieInt("Taille (Mb) : ");
+                v = new VideoMp4(titre, auteur, date, duree, chemin, taille);
+                break;
+            case 3:
+                chemin = saisieStr("Nom du fichier (ex : video.mp4) : ");
+                taille = saisieInt("Taille (Mb) : ");
+                v = new VideoAvi(titre, auteur, date, duree, chemin, taille);
+                break;
+            default:
+                throw new SaisieInvalideException("Veuillez choisir une des options proposées.");
+        }
 
-    public void convertirVideo() throws SaisieInvalideException {
-        String titre = saisieStr("Titre de la vidéo à convertir : ");
-        String format = saisieFormat("Format cible (MP4, AVI) : ");
-
-
+        videotheque.ajouterVideo(v);
     }
 
     public void listerVideo() throws VideothequeVideException {
         try {
-           videotheque.listerVideos();
+            videotheque.listerVideos();
         } catch (VideothequeVideException e) {
             System.out.println(e.getMessage());
         }
     }
 
     public void rechercherVideo() throws VideoIntrouvableException, VideothequeVideException {
-        try {
-            videotheque.supprimerVideo();
-        }
 
+    }
+
+    public void convertirVideo() throws SaisieInvalideException, VideothequeVideException, VideoIntrouvableException {
+        String titre = saisieStr("Titre de la vidéo à convertir : ");
+        String format = saisieFormat("Format cible (MP4, AVI) : ");
+
+        Video v = videotheque.rechercherVideo(titre);
+        if (v instanceof FichierVideo) {
+
+        }
+    }
+
+    public void lireVideo() throws SaisieInvalideException, VideothequeVideException, VideoIntrouvableException {
+        videotheque.lireVideo(saisieStr("Titre : "));
     }
 }
