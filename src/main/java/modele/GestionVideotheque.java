@@ -5,6 +5,7 @@ import exceptions.*;
 import java.io.IOException;
 
 public interface GestionVideotheque {
+
     void ajouterVideo(Video v)
             throws VideoDejaExistanteException, SaisieInvalideException;
 
