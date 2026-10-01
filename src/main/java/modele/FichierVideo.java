@@ -14,21 +14,21 @@ import java.time.LocalDate;
 import java.util.List;
 
 public abstract class FichierVideo extends Video implements Convertible, Runnable {
-    private String chemin;
+    private String nomFichier;
     private int taille;
 
-    public FichierVideo(String titre, String realisateur, LocalDate dateSortie, int duree, String chemin, int taille) {
+    public FichierVideo(String titre, String realisateur, LocalDate dateSortie, int duree, String nomFichier, int taille) {
         super(titre, realisateur, dateSortie, duree);
-        this.chemin = chemin;
+        this.nomFichier = nomFichier;
         this.taille = taille;
     }
 
-    public String getChemin() {
-        return chemin;
+    public String getNomFichier() {
+        return nomFichier;
     }
 
-    public void setChemin(String chemin) {
-        this.chemin = chemin;
+    public void setNomFichier(String nomFichier) {
+        this.nomFichier = nomFichier;
     }
 
     public int getTaille() {
@@ -40,16 +40,16 @@ public abstract class FichierVideo extends Video implements Convertible, Runnabl
     }
 
     public String getFormat() {
-        String cheminMinuscule = chemin.toLowerCase();
+        String cheminMinuscule = nomFichier.toLowerCase();
         return cheminMinuscule.substring(cheminMinuscule.lastIndexOf(".") + 1);
     }
 
     public File getFichier() {
-        return new File(chemin);
+        return new File("media/" + nomFichier);
     }
 
     public void lire() {
-        File file = new File(chemin);
+        File file = new File(nomFichier);
         if (!file.exists()) {
             throw new LectureImpossibleException("Le fichier spécifié est introuvable.");
         }
@@ -107,7 +107,7 @@ public abstract class FichierVideo extends Video implements Convertible, Runnabl
             throw new IOException("FFmpeg a échoué");
         }
 
-        this.setChemin(nouveauChemin);
+        this.setNomFichier(nouveauChemin);
 
         System.out.println("Conversion terminée : " + converti.getPath());
 
