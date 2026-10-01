@@ -1,7 +1,12 @@
 package application;
 
 import exceptions.SaisieInvalideException;
+import exceptions.VideothequeVideException;
 import modele.FichierVideo;
+
+import modele.Videotheque;
+import modele.Videotheque;
+import exceptions.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -11,7 +16,7 @@ import java.util.Scanner;
 
 public class Controller {
     static Scanner scan = new Scanner(System.in);
-
+    static Videotheque videotheque = new Videotheque();
     /**
      * Affiche le menu principal
      */
@@ -141,6 +146,22 @@ public class Controller {
     public void convertirVideo() throws SaisieInvalideException {
         String titre = saisieStr("Titre de la vidéo à convertir : ");
         String format = saisieFormat("Format cible (MP4, AVI) : ");
+
+
+    }
+
+    public void listerVideo() throws VideothequeVideException {
+        try {
+           videotheque.listerVideos();
+        } catch (VideothequeVideException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void rechercherVideo() throws VideoIntrouvableException, VideothequeVideException {
+        try {
+            videotheque.supprimerVideo();
+        }
 
     }
 }
