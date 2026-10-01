@@ -7,8 +7,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class VideoMp4 extends FichierVideo {
-    public VideoMp4(String titre, String realisateur, LocalDate dateSortie, int duree, String chemin, int taille) {
-        super(titre, realisateur, dateSortie, duree, chemin, taille);
+    public VideoMp4(String titre, String realisateur, LocalDate dateSortie, int duree, String nomFichier, int taille) {
+        super(titre, realisateur, dateSortie, duree, nomFichier, taille);
     }
 
     public String getSupport() {
