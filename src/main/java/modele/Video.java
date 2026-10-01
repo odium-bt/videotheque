@@ -1,5 +1,7 @@
 package modele;
 
+import exceptions.LectureImpossibleException;
+
 import java.time.LocalDate;
 import java.util.List;
 

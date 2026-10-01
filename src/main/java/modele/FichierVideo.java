@@ -122,5 +122,3 @@ public abstract class FichierVideo extends Video implements Convertible, Runnabl
 
     protected abstract List<String> optionsEncodage();
 }
-
-
