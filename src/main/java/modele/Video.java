@@ -1,0 +1,64 @@
+package modele;
+
+import java.time.LocalDate;
+
+abstract class Video implements Convertible{
+    protected String titre;
+    protected String realisateur;
+    protected LocalDate dateSortie;
+    protected  int duree;
+
+    public Video(String titre, String realisateur, LocalDate dateSortie, int duree) {
+        this.titre = titre;
+        this.realisateur = realisateur;
+        this.dateSortie = dateSortie;
+        this.duree = duree;
+    }
+
+    public String getTitre() {
+        return titre;
+    }
+
+    public void setTitre(String titre) {
+        this.titre = titre;
+    }
+
+    public String getRealisateur() {
+        return realisateur;
+    }
+
+    public void setRealisateur(String realisateur) {
+        this.realisateur = realisateur;
+    }
+
+    public LocalDate getDateSortie() {
+        return dateSortie;
+    }
+
+    public void setDateSortie(LocalDate dateSortie) {
+        this.dateSortie = dateSortie;
+    }
+
+    public int getDuree() {
+        return duree;
+    }
+
+    public void setDuree(int duree) {
+        this.duree = duree;
+    }
+
+
+    public String[] getSupport() {
+        return new String[] {"DVD", "MP4", "AVI"};
+    }
+
+    @Override
+    public String toString() {
+        return "Video{" +
+                "titre='" + titre + '\'' +
+                ", realisateur='" + realisateur + '\'' +
+                ", dateSortie=" + dateSortie +
+                ", duree=" + duree +
+                '}';
+    }
+}
