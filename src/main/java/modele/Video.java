@@ -1,11 +1,9 @@
 package modele;
 
-import exceptions.LectureImpossibleException;
-
 import java.time.LocalDate;
 import java.util.List;
 
-abstract class Video implements Convertible {
+public abstract class Video implements Convertible {
     protected String titre;
     protected String realisateur;
     protected LocalDate dateSortie;
