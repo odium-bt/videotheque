@@ -1,6 +1,8 @@
 package application;
 
 import exceptions.SaisieInvalideException;
+import modele.FichierVideo;
+import modele.Videotheque;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -84,7 +86,7 @@ public class Controller {
 
 
     public String saisieNomA() throws SaisieInvalideException {
-        return (saisieStr("Nom de l'album : "));
+        return (saisieStr("Nom de la vidéo : "));
     }
 
     public LocalDate saisieDate() throws SaisieInvalideException {
@@ -114,7 +116,7 @@ public class Controller {
     }
 
     public String saisieNum() throws SaisieInvalideException {
-        return saisieStr("Numéro de l'album : ");
+        return saisieStr("Numéro de la vidéo : ");
     }
 
     public String saisieType() throws SaisieInvalideException {
@@ -134,10 +136,23 @@ public class Controller {
     }
 
     public int saisieDuree() throws SaisieInvalideException {
-        return saisieInt("Durée de l'album (en minutes) : ");
+        return saisieInt("Durée de la vidéo (en minutes) : ");
     }
 
     public int saisieTaille() throws SaisieInvalideException {
         return saisieInt("Taille du vinyle (en cm) : ");
+    }
+
+    public void saisieVideo() throws SaisieInvalideException {
+        String nomVideo = saisieNomA();
+        String auteur = saisieAuteur();
+        LocalDate date = saisieDate();
+        int quantite = saisieQuantite();
+
+        String num;
+
+        FichierVideo v = null;
+
+        Videotheque.creerVideo(v);
     }
 }
