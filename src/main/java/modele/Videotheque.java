@@ -3,13 +3,14 @@ package modele;
 import exceptions.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
-public class Videothequee implements GestionVideotheque {
+public class Videotheque implements GestionVideotheque {
     private ArrayList<Video> videos = new ArrayList<>();
 
-    public Videothequee(ArrayList<Video> videos) {
-        this.videos = new ArrayList<>(videos);
+    public Videotheque() {
+
     }
 
     @Override
@@ -47,7 +48,7 @@ public class Videothequee implements GestionVideotheque {
             throw new VideothequeVideException("La vidéothèque est vide");
         }
         for (Video video : videos) {
-            if (video.getTitre().equals(titre)){
+            if (video.getTitre().equals(titre)) {
                 return video;
             }
         }
@@ -72,7 +73,7 @@ public class Videothequee implements GestionVideotheque {
     @Override
     public Video convertirVideo(String titre, String formatCible)
             throws VideoIntrouvableException, VideothequeVideException,
-            ConversionImpossibleException, SaisieInvalideException {
+            ConversionImpossibleException, SaisieInvalideException, IOException, InterruptedException {
         Video v = rechercherVideo(titre);
         if (!(v instanceof Convertible)) {
             throw new ConversionImpossibleException("Conversion impossible");
