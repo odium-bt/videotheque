@@ -1,6 +1,7 @@
 package modele;
 
 import exceptions.ConversionImpossibleException;
+import exceptions.LectureImpossibleException;
 import exceptions.SaisieInvalideException;
 
 import java.time.LocalDate;
@@ -19,4 +20,11 @@ public class VideoAvi extends FichierVideo {
     public List<String> optionsEncodage() {
         return List.of("MPEG-4", "MP3");
     }
+
+    @Override
+    public FichierVideo convertir(String formatCible) throws ConversionImpossibleException, SaisieInvalideException {
+        return null;
+    }
+
+
 }
