@@ -1,9 +1,11 @@
 package application;
 
 import exceptions.SaisieInvalideException;
+import exceptions.VideothequeVideException;
 import modele.FichierVideo;
 import modele.Videotheque;
-
+import modele.Videotheque;
+import exceptions.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -12,21 +14,20 @@ import java.util.Scanner;
 
 public class Controller {
     static Scanner scan = new Scanner(System.in);
-
+    static Videotheque videotheque = new Videotheque();
     /**
      * Affiche le menu principal
      */
     public int afficherMenu() {
         System.out.println("===== GESTION DE LA VIDEOTHEQUE =====");
         System.out.println("1. Ajouter une vidéo");
-        System.out.println("2. Supprimer une vidéo");
-        System.out.println("3. Afficher le contenu de la vidéothèque");
-        System.out.println("4. Vider la vidéothèque");
-        System.out.println("5. Rechercher une vidéo");
-        System.out.println("6. Écouter une vidéo");
-        System.out.println("7. Arrêter la vidéo");
+        System.out.println("2. Lister toutes les vidéos");
+        System.out.println("3. Rechercher une vidéo");
+        System.out.println("4. Supprimer une vidéo");
+        System.out.println("5. Lire une vidéo");
+        System.out.println("6. Convertir une vidéo");
         System.out.println("0. Quitter");
-        System.out.print("Choix:");
+        System.out.print("Votre choix : ");
         try {
             return Controller.scan.nextInt();
         } catch (InputMismatchException e) {
@@ -80,19 +81,10 @@ public class Controller {
         return s;
     }
 
-    public String saisieAuteur() throws SaisieInvalideException {
-        return (saisieStr("Nom de l'auteur : "));
-    }
-
-
-    public String saisieNomA() throws SaisieInvalideException {
-        return (saisieStr("Nom de la vidéo : "));
-    }
-
     public LocalDate saisieDate() throws SaisieInvalideException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate date;
-        String dateD = saisieStr("Date de parution (jj/mm/aaaa) : ");
+        String dateD = saisieStr("Date de sortie (jj/mm/aaaa) : ");
         try {
             date = LocalDate.parse(dateD, formatter);
         } catch (DateTimeParseException e) {
@@ -110,49 +102,62 @@ public class Controller {
         return date;
     }
 
-    public int saisieQuantite() throws SaisieInvalideException {
-        return saisieInt("Nombre d'exemplaires : ");
-
-    }
-
     public String saisieNum() throws SaisieInvalideException {
         return saisieStr("Numéro de la vidéo : ");
     }
 
-    public String saisieType() throws SaisieInvalideException {
-        return saisieStr("Type de disque (simple/double) : ");
+    public int saisieDuree() throws SaisieInvalideException {
+        return saisieInt("Durée (minutes) : ");
     }
 
-    public String saisieFormat() throws SaisieInvalideException {
-        String ext = saisieStr("Format du fichier (ex: mp3) : ").toLowerCase();
-        if (switch (ext) {
-            case "mp3", "flac", "wav", "aac" -> true;
-            default -> false;
-        }) {
-            return ext;
+
+    public int saisieSupport() throws SaisieInvalideException {
+        int s = saisieInt("Support (1 = DVD, 2 = fichier MP4, 3 = fichier AVI) : ");
+        if (s >= 1 && s <= 3) {
+            return s;
         } else {
-            throw new SaisieInvalideException("Format de fichier invalide");
+            throw new SaisieInvalideException("Veuillez choisir une des options proposées.");
         }
     }
 
-    public int saisieDuree() throws SaisieInvalideException {
-        return saisieInt("Durée de la vidéo (en minutes) : ");
+    public String saisieFormat(String msg) throws SaisieInvalideException {
+        String f = saisieStr(msg).toLowerCase();
+        if (!f.equals("mp4") && !f.equals("avi")){
+            throw new SaisieInvalideException("Donnée entrée invalide");
+        }
     }
 
-    public int saisieTaille() throws SaisieInvalideException {
-        return saisieInt("Taille du vinyle (en cm) : ");
-    }
-
-    public void saisieVideo() throws SaisieInvalideException {
-        String nomVideo = saisieNomA();
-        String auteur = saisieAuteur();
+    public void ajouterVideo() throws SaisieInvalideException {
+        int support = saisieSupport();
+        String titre = saisieStr("Titre : ");
+        String auteur = saisieStr("Réalisateur : ");
         LocalDate date = saisieDate();
-        int quantite = saisieQuantite();
+        String chemin = saisieStr("Chemin du fichier : ");
 
         String num;
 
         FichierVideo v = null;
 
-        Videotheque.creerVideo(v);
+        // GestionVideotheque.creerVideo(v);
+    }
+
+    public void convertirVideo() throws SaisieInvalideException {
+        String titre = saisieStr("Titre de la vidéo à convertir : ");
+        String format = saisieFormat("Format cible (MP4, AVI) : ");
+
+    }
+
+    public void listerVideo() throws VideothequeVideException {
+        try {
+           videotheque.listerVideos();
+        } catch (VideothequeVideException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void rechercherVideo() throws VideoIntrouvableException, VideothequeVideException {
+        try {
+            videotheque.supprimerVideo();
+        }
     }
 }
