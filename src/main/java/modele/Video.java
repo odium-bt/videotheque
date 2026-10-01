@@ -1,6 +1,7 @@
 package modele;
 
 import java.time.LocalDate;
+import java.util.List;
 
 abstract class Video implements Convertible {
     protected String titre;
@@ -58,4 +59,6 @@ abstract class Video implements Convertible {
                 ", duree=" + duree +
                 '}';
     }
+
+    protected abstract List<String> optionsEncodage();
 }

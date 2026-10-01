@@ -9,6 +9,21 @@ public final class Ffmpeg {
     private Ffmpeg() {
     } // classe utilitaire : aucune instance
 
+    public static int lire(File fichier, String titreFenetre) throws IOException, InterruptedException {
+        List<String> commande = new ArrayList<>();
+
+        commande.add("ffplay");
+        commande.add("-autoexit");
+        commande.add("-window_title");
+        commande.add(titreFenetre);
+        commande.add(fichier.getAbsolutePath());
+
+        ProcessBuilder pb = new ProcessBuilder(commande);
+        Process processus = pb.start();
+
+        return processus.waitFor(); // attend la fin de ffmplay
+    }
+
     /**
      * ffmpeg -y -i entree [options] sortie
      * Renvoie le code de retour de ffmpeg (0 = succès).
@@ -16,6 +31,7 @@ public final class Ffmpeg {
     public static int convertir(File entree, File sortie, List<String> options)
             throws IOException, InterruptedException {
         List<String> commande = new ArrayList<>();
+
         commande.add("ffmpeg");
         commande.add("-y");
         commande.add("-loglevel");

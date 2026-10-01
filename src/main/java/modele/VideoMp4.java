@@ -19,9 +19,4 @@ public class VideoMp4 extends FichierVideo {
     public List<String> optionsEncodage() {
         return List.of("H.264", "AAC");
     }
-
-    @Override
-    public FichierVideo convertir(String formatCible) throws ConversionImpossibleException, SaisieInvalideException {
-        return null;
-    }
 }

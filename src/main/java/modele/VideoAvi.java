@@ -19,9 +19,4 @@ public class VideoAvi extends FichierVideo {
     public List<String> optionsEncodage() {
         return List.of("MPEG-4", "MP3");
     }
-
-    @Override
-    public FichierVideo convertir(String formatCible) throws ConversionImpossibleException, SaisieInvalideException {
-        return null;
-    }
 }

@@ -6,12 +6,12 @@ import exceptions.SaisieInvalideException;
 import java.time.LocalDate;
 import java.util.List;
 
-public class Dvd extends FichierVideo {
+public class Dvd extends Video {
     private String numero;
     private int zone;
 
-    public Dvd(String titre, String realisateur, LocalDate dateSortie, int duree, String chemin, int taille, String numero, int zone) {
-        super(titre, realisateur, dateSortie, duree, chemin, taille);
+    public Dvd(String titre, String realisateur, LocalDate dateSortie, int duree, String numero, int zone) {
+        super(titre, realisateur, dateSortie, duree);
         this.numero = numero;
         this.zone = zone;
     }
