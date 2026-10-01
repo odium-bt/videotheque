@@ -2,7 +2,6 @@ package application;
 
 import exceptions.SaisieInvalideException;
 import modele.FichierVideo;
-import modele.Videotheque;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -153,6 +152,6 @@ public class Controller {
 
         FichierVideo v = null;
 
-        Videotheque.creerVideo(v);
+        // GestionVideotheque.creerVideo(v);
     }
 }
