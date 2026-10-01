@@ -40,6 +40,7 @@ public class Main {
                 System.err.println(e.getMessage());
             }
         } while (choix != 0);
+
         scan.close();
     }
 }

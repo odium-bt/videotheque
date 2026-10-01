@@ -8,7 +8,6 @@ import modele.*;
 import modele.FichierVideo;
 
 import modele.Videotheque;
-import exceptions.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -171,7 +170,7 @@ public class Controller {
         videotheque.ajouterVideo(v);
     }
 
-    public void listerVideo() throws VideothequeVideException {
+    public void listerVideos() throws VideothequeVideException {
         try {
             videotheque.listerVideos();
         } catch (VideothequeVideException e) {
