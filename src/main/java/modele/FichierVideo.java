@@ -49,9 +49,9 @@ public abstract class FichierVideo extends Video implements Convertible, Runnabl
     }
 
     public void lire() {
-        File file = new File(nomFichier);
+        File file = new File("media/" + nomFichier);
         if (!file.exists()) {
-            throw new LectureImpossibleException("Le fichier spécifié est introuvable.");
+            throw new LectureImpossibleException("Le fichier spécifié est introuvable : " + file.getPath());
         }
 
         Thread thread = new Thread(this, "Lecteur-" + titre);
@@ -63,10 +63,10 @@ public abstract class FichierVideo extends Video implements Convertible, Runnabl
     }
 
     public void run() {
-        try (FileInputStream flux = new FileInputStream(this.getFichier())) {
-            Player player = new Player(flux);
-            player.play();
-        } catch (IOException | JavaLayerException e) {
+        try {
+            File file = new File("media/" + nomFichier);
+            Ffmpeg.lire(file, nomFichier);
+        } catch (IOException | InterruptedException e) {
             System.out.println("Erreur : " + e.getMessage());
         }
         System.out.println("Fin de lecture : " + Thread.currentThread().getName());
