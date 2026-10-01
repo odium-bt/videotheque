@@ -2,11 +2,11 @@ package modele;
 
 import java.time.LocalDate;
 
-abstract class Video implements Convertible{
+abstract class Video implements Convertible {
     protected String titre;
     protected String realisateur;
     protected LocalDate dateSortie;
-    protected  int duree;
+    protected int duree;
 
     public Video(String titre, String realisateur, LocalDate dateSortie, int duree) {
         this.titre = titre;
@@ -47,10 +47,7 @@ abstract class Video implements Convertible{
         this.duree = duree;
     }
 
-
-    public String[] getSupport() {
-        return new String[] {"DVD", "MP4", "AVI"};
-    }
+    public abstract String getSupport();
 
     @Override
     public String toString() {
