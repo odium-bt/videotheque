@@ -34,9 +34,15 @@ public abstract class FichierVideo extends Video implements Convertible {
         return new File(chemin);
     }
 
-    public void lire(){};
+    public void lire() {
+    }
 
-    public void convertir(){};
+    ;
+
+    public void convertir() {
+    }
+
+    ;
 
     protected abstract List<String> optionsEncodage();
 }
