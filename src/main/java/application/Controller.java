@@ -119,7 +119,7 @@ public class Controller {
 
     public String saisieFormat(String msg) throws SaisieInvalideException {
         String f = saisieStr(msg).toLowerCase();
-        if (f != "mp4" && f != "avi"){
+        if (!f.equals("mp4") && !f.equals("avi")){
             throw new SaisieInvalideException("Donnée entrée invalide");
         }
     }
