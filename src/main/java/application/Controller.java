@@ -42,6 +42,12 @@ public class Controller {
         }
     }
 
+    /**
+     * Demande à l'utilisateur de saisir une chaine de caractère
+     * @param msg le message affiché à l'utilisateur
+     * @return String s la saisie de l'utilisateur
+     * @throws SaisieInvalideException
+     */
     public String saisieStr(String msg) throws SaisieInvalideException {
         String s;
         System.out.print(msg);
