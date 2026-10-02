@@ -7,6 +7,8 @@ import exceptions.VideothequeVideException;
 import modele.GestionVideotheque;
 import modele.Videotheque;
 
+import java.io.IOException;
+
 import static application.Controller.scan;
 
 public class Main {
@@ -35,6 +37,9 @@ public class Main {
                     case 5:
                         c.lireVideo();
                         break;
+                    case 6:
+                        c.convertirVideo();
+                        break;
                     case 0:
                         System.out.println("Fin du programme. Au revoir !");
                         break;
@@ -44,6 +49,8 @@ public class Main {
             } catch (SaisieInvalideException | VideoDejaExistanteException | VideothequeVideException |
                      VideoIntrouvableException e) {
                 System.err.println(e.getMessage());
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
             }
         } while (choix != 0);
 
