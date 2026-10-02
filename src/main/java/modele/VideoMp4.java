@@ -19,4 +19,9 @@ public class VideoMp4 extends FichierVideo {
     public List<String> optionsEncodage() {
         return List.of("H.264", "AAC");
     }
+
+    @Override
+    protected List<String> optionsStreaming() {
+        return List.of("-c", "copy");
+    }
 }
