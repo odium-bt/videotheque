@@ -1,14 +1,13 @@
 package application;
 
-import exceptions.SaisieInvalideException;
-import exceptions.VideoDejaExistanteException;
-import exceptions.VideoIntrouvableException;
-import exceptions.VideothequeVideException;
+import exceptions.*;
 import modele.*;
 import modele.FichierVideo;
 
 import modele.Videotheque;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -146,6 +145,7 @@ public class Controller {
         int taille;
 
         Video v;
+        boolean valid = false;
 
         switch (support) {
             case 1:
@@ -154,12 +154,26 @@ public class Controller {
                 v = new Dvd(titre, auteur, date, duree, numero, zone);
                 break;
             case 2:
-                chemin = saisieStr("Nom du fichier (ex : video.mp4) : ");
+                do {
+                    chemin = saisieStr("Nom du fichier (ex : video.mp4) : ");
+                    if (new File("media/" + chemin).exists()) {
+                        valid = true;
+                    } else {
+                        System.out.println("Fichier introuvable, veuillez ré-essayer");
+                    }
+                } while (!valid);
                 taille = saisieInt("Taille (Mb) : ");
                 v = new VideoMp4(titre, auteur, date, duree, chemin, taille);
                 break;
             case 3:
-                chemin = saisieStr("Nom du fichier (ex : video.mp4) : ");
+                do {
+                    chemin = saisieStr("Nom du fichier (ex : video.aav) : ");
+                    if (new File("media/" + chemin).exists()) {
+                        valid = true;
+                    } else {
+                        System.out.println("Fichier introuvable, veuillez ré-essayer");
+                    }
+                } while (!valid);
                 taille = saisieInt("Taille (Mb) : ");
                 v = new VideoAvi(titre, auteur, date, duree, chemin, taille);
                 break;
@@ -178,21 +192,30 @@ public class Controller {
         }
     }
 
-    public void rechercherVideo() throws VideoIntrouvableException, VideothequeVideException {
-
+    public void rechercherVideo() throws VideoIntrouvableException, VideothequeVideException, SaisieInvalideException {
+        String titre = saisieStr("Titre de la vidéo : ");
+        Video v = videotheque.rechercherVideo(titre);
+        System.out.println(v.toString());
     }
 
-    public void convertirVideo() throws SaisieInvalideException, VideothequeVideException, VideoIntrouvableException {
+    public void convertirVideo() throws SaisieInvalideException, VideothequeVideException, VideoIntrouvableException, IOException, InterruptedException {
         String titre = saisieStr("Titre de la vidéo à convertir : ");
         String format = saisieFormat("Format cible (MP4, AVI) : ");
 
         Video v = videotheque.rechercherVideo(titre);
         if (v instanceof FichierVideo) {
-
+            v.convertir(format);
+        } else {
+            throw new ConversionImpossibleException("La vidéo choisie n'est pas dans un format convertible");
         }
     }
 
     public void lireVideo() throws SaisieInvalideException, VideothequeVideException, VideoIntrouvableException {
         videotheque.lireVideo(saisieStr("Titre : "));
+    }
+
+    public void supprimerVideo() throws VideoIntrouvableException, VideothequeVideException, SaisieInvalideException {
+        String titre = saisieStr("Titre de la vidéo : ");
+        videotheque.supprimerVideo(titre);
     }
 }
