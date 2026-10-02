@@ -3,12 +3,9 @@ package modele;
 import exceptions.ConversionImpossibleException;
 import exceptions.LectureImpossibleException;
 import exceptions.SaisieInvalideException;
-import javazoom.jl.decoder.JavaLayerException;
-import javazoom.jl.player.Player;
 import outils.Ffmpeg;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
@@ -69,6 +66,7 @@ public abstract class FichierVideo extends Video implements Convertible, Runnabl
         } catch (IOException | InterruptedException e) {
             System.out.println("Erreur : " + e.getMessage());
         }
+        System.out.println();
         System.out.println("Fin de lecture : " + Thread.currentThread().getName());
     }
 

@@ -26,6 +26,12 @@ public class Main {
                     case 2:
                         c.listerVideos();
                         break;
+                    case 3:
+                        c.rechercherVideo();
+                        break;
+                    case 4:
+                        c.supprimerVideo();
+                        break;
                     case 5:
                         c.lireVideo();
                         break;
