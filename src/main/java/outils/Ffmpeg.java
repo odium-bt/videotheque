@@ -19,6 +19,10 @@ public final class Ffmpeg {
         commande.add(fichier.getAbsolutePath());
 
         ProcessBuilder pb = new ProcessBuilder(commande);
+
+        pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
+        pb.redirectError(ProcessBuilder.Redirect.DISCARD);
+
         Process processus = pb.start();
 
         return processus.waitFor(); // attend la fin de ffmplay
