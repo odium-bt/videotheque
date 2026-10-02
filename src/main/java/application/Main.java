@@ -14,7 +14,6 @@ import static application.Controller.scan;
 public class Main {
     private static final GestionVideotheque videotheque = new Videotheque();
     private static final Controller c = new Controller();
-
     static void main() {
         int choix = 0;
         do {
@@ -40,7 +39,17 @@ public class Main {
                     case 6:
                         c.convertirVideo();
                         break;
+                    case 7:
+                        c.diffuserVideo();
+                        break;
+                    case 8:
+                        c.diffuserCamera();
+                        break;
+                    case 9:
+                        c.arreterDiffusion();
+                        break;
                     case 0:
+                        c.arreterDiffusion();
                         System.out.println("Fin du programme. Au revoir !");
                         break;
                     default:
