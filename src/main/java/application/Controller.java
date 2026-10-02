@@ -14,6 +14,8 @@ import java.time.format.DateTimeParseException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import util.Utils;
+
 public class Controller {
     static Scanner scan = new Scanner(System.in);
     private final Videotheque videotheque = new Videotheque();
@@ -29,6 +31,9 @@ public class Controller {
         System.out.println("4. Supprimer une vidéo");
         System.out.println("5. Lire une vidéo");
         System.out.println("6. Convertir une vidéo");
+        System.out.println("7. Diffuser une vidéo en streaming");
+        System.out.println("8. Diffuser la caméra du laptop");
+        System.out.println("9. Arrêter la diffusion");
         System.out.println("0. Quitter");
         System.out.println("=================================");
         System.out.print("Votre choix : ");
@@ -223,5 +228,35 @@ public class Controller {
     public void supprimerVideo() throws VideoIntrouvableException, VideothequeVideException, SaisieInvalideException {
         String titre = saisieStr("Titre de la vidéo : ");
         videotheque.supprimerVideo(titre);
+    }
+
+    public void diffuserVideo() throws VideothequeVideException, VideoIntrouvableException, SaisieInvalideException {
+
+        String n = saisieStr("Saisissez le nom de la vidéo");
+        Video v = videotheque.rechercherVideo(n);
+        String nomFlux = null;
+        Boolean boucle = null;
+
+        if(v instanceof FichierVideo) System.out.println("La vidéo doit-être un fichier numérique !");
+        else{
+            nomFlux = saisieStr("Nom du flux : ");
+            boucle = (saisieStr("Activre le bouclage ? (y/n)").equals("y")) ? true : false;
+            streamer.diffuserFichier(v,nomFlux,boucle);
+            System.out.println(streamer.getUrlLecture); //
+        }
+    }
+
+    public void diffuserCamera() throws SaisieInvalideException {
+
+        String nomFlux = saisieStr("Nom du flux : ");
+        streamer.diffuserCamera(nomFlux);
+
+    }
+
+    public void arreterDiffusion() {
+
+        if(streamer.estEnCours()) streamer.arreter();
+        else System.out.println("Aucun flux en cours de diffusion");
+
     }
 }
