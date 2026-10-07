@@ -234,7 +234,7 @@ public class Controller {
 
     public void diffuserVideo() throws VideothequeVideException, VideoIntrouvableException, SaisieInvalideException, IOException {
 
-        String n = saisieStr("Saisissez le nom de la vidéo");
+        String n = saisieStr("Titre de la vidéo : ");
         Video v = videotheque.rechercherVideo(n);
         String nomFlux = null;
         Boolean boucle = null;
