@@ -29,6 +29,7 @@ public class Streamer {
         if (estEnCours()) {
             throw new StreamingException("Une diffusion est déjà en cours !");
         }
+        this.fluxEnCours=nomFlux;
         List<String> commande = new ArrayList<>();
 
         commande.add("ffmpeg");
@@ -40,25 +41,42 @@ public class Streamer {
         commande.add("-i");
         commande.add(video.getFichier().getAbsolutePath());
         commande.addAll(video.getOptionsStreaming());
-        commande.add("-f");
-        commande.add("rtsp");
-        commande.add("-rtsp_transport");
-        commande.add("tcp");
-        commande.add(urlServeur + "/" + nomFlux);
+        commande.addAll(optionsSortie(nomFlux));
 
-        ProcessBuilder pb = new ProcessBuilder(commande);
-
-        pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
-        pb.redirectError(ProcessBuilder.Redirect.DISCARD);
-
-        this.processus = pb.start();
+        lancer(commande,nomFlux);
     }
 
     /**
      * ffmpeg <entrée caméra selon le système> <encodage direct> <sortie>
      */
     public void diffuserCamera(String nomFlux)
-            throws StreamingException, SaisieInvalideException { /* TODO */ }
+            throws StreamingException, SaisieInvalideException, IOException {
+
+        List<String> commande = List.of();
+        commande.add("ffmpeg");
+        commande.addAll(optionsCamera());
+        commande.addAll(List.of(
+
+                "-video_size", "1280x720",
+                "-framerate", "30",
+                "-i", "video=Integrated Camera:audio=Microphone (Realtek(R) Audio)",
+                "-c:v", "libx264",
+                "-preset", "ultrafast",
+                "-tune", "zerolatency",
+                "-pix_fmt", "yuv420p",
+                "-g", "30",
+                "-b:v", "2000k",
+                "-maxrate", "2000k",
+                "-bufsize", "2000k",
+                "-c:a", "aac",
+                "-b:a", "128k",
+                "-ar", "44100"
+        ));
+
+        commande.addAll(optionsSortie(nomFlux));
+
+        lancer(commande,nomFlux);
+    }
 
     /**
      * Arrête proprement ffmpeg : envoie "q" sur son entrée standard,
@@ -84,29 +102,50 @@ public class Streamer {
      * URL à donner aux spectateurs, ex. rtsp://.../film
      */
     public String getUrlLecture() { /* TODO */
-        return "";
+        return urlServeur+"/"+fluxEnCours;
     }
 
     /**
      * -f rtsp -rtsp_transport tcp rtsp://serveur:8554/nomFlux
      */
     private List<String> optionsSortie(String nomFlux) { /* TODO */
-        return List.of();
+
+        return List.of("-f", "rtsp",
+                "-rtsp_transport", "tcp",
+                this.urlServeur+"/"+nomFlux);
+
     }
 
     /**
      * Entrée caméra : dshow, v4l2 ou avfoundation selon os.name
      */
     private List<String> optionsCamera() { /* TODO */
-        return List.of();
+        String os = System.getProperty("os.name");
+        os = os.split(" ")[0].toLowerCase();
+        switch(os){
+            case "windows":
+                return List.of("-f", "dshow","-rtbufsize", "100M");
+            case "linux":
+                return List.of("-f","v4l2","-framerate","30");
+            case "mac":
+                return List.of("-f","avfoundation","-framerate","30");
+            default:
+                throw new UnsupportedOperationException();
+        }
     }
 
     /**
      * Lance ffmpeg et lit sa sortie dans un thread daemon.
      */
     private void lancer(List<String> commande, String nomFlux)
-            throws StreamingException {
-        Thread thread = new Thread();
+            throws StreamingException, IOException {
+
+        ProcessBuilder pb = new ProcessBuilder(commande);
+
+        pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
+        pb.redirectError(ProcessBuilder.Redirect.DISCARD);
+
+        this.processus = pb.start();
 
     }
 }

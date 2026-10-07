@@ -232,23 +232,24 @@ public class Controller {
         videotheque.supprimerVideo(titre);
     }
 
-    public void diffuserVideo() throws VideothequeVideException, VideoIntrouvableException, SaisieInvalideException, IOException {
+    public void diffuserVideo() throws VideothequeVideException, VideoIntrouvableException, SaisieInvalideException, IOException, StreamingException {
 
-        String n = saisieStr("Saisissez le nom de la vidéo");
+        String n = saisieStr("Titre de la vidéo : ");
         Video v = videotheque.rechercherVideo(n);
         String nomFlux = null;
         Boolean boucle = null;
 
-        if(v instanceof FichierVideo) System.out.println("La vidéo doit-être un fichier numérique !");
+        if(!(v instanceof FichierVideo)) System.out.println("La vidéo doit-être un fichier numérique !");
         else{
             nomFlux = saisieStr("Nom du flux : ");
-            boucle = (saisieStr("Activre le bouclage ? (y/n)").equals("y")) ? true : false;
+            boucle = (saisieStr("Activre le bouclage ? (y/n) : ").equals("y")) ? true : false;
             Utils.streamer.diffuserFichier((FichierVideo) v,nomFlux,boucle);
-            System.out.println(Utils.streamer.getUrlLecture); //
+            System.out.println(">> Diffusion lancée <<");
+            System.out.println(Utils.streamer.getUrlLecture()); //
         }
     }
 
-    public void diffuserCamera() throws SaisieInvalideException {
+    public void diffuserCamera() throws SaisieInvalideException, IOException {
 
         String nomFlux = saisieStr("Nom du flux : ");
         Utils.streamer.diffuserCamera(nomFlux);
