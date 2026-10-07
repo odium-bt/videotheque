@@ -1,9 +1,6 @@
 package application;
 
-import exceptions.SaisieInvalideException;
-import exceptions.VideoDejaExistanteException;
-import exceptions.VideoIntrouvableException;
-import exceptions.VideothequeVideException;
+import exceptions.*;
 import modele.GestionVideotheque;
 import modele.Videotheque;
 
@@ -58,8 +55,8 @@ public class Main {
             } catch (SaisieInvalideException | VideoDejaExistanteException | VideothequeVideException |
                      VideoIntrouvableException e) {
                 System.err.println(e.getMessage());
-            } catch (IOException | InterruptedException e) {
-                throw new RuntimeException(e);
+            } catch (StreamingException | IOException | InterruptedException e) {
+                System.err.println(e.getMessage());
             }
         } while (choix != 0);
 

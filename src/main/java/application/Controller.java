@@ -232,7 +232,7 @@ public class Controller {
         videotheque.supprimerVideo(titre);
     }
 
-    public void diffuserVideo() throws VideothequeVideException, VideoIntrouvableException, SaisieInvalideException, IOException {
+    public void diffuserVideo() throws VideothequeVideException, VideoIntrouvableException, SaisieInvalideException, IOException, StreamingException {
 
         String n = saisieStr("Titre de la vidéo : ");
         Video v = videotheque.rechercherVideo(n);
@@ -248,7 +248,7 @@ public class Controller {
         }
     }
 
-    public void diffuserCamera() throws SaisieInvalideException {
+    public void diffuserCamera() throws SaisieInvalideException, IOException {
 
         String nomFlux = saisieStr("Nom du flux : ");
         Utils.streamer.diffuserCamera(nomFlux);
