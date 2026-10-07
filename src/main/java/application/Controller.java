@@ -239,7 +239,7 @@ public class Controller {
         String nomFlux = null;
         Boolean boucle = null;
 
-        if(v instanceof FichierVideo) System.out.println("La vidéo doit-être un fichier numérique !");
+        if(!(v instanceof FichierVideo)) System.out.println("La vidéo doit-être un fichier numérique !");
         else{
             nomFlux = saisieStr("Nom du flux : ");
             boucle = (saisieStr("Activre le bouclage ? (y/n)").equals("y")) ? true : false;
