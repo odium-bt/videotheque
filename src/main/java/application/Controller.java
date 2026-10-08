@@ -5,7 +5,6 @@ import modele.*;
 import modele.FichierVideo;
 
 import modele.Videotheque;
-import util.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +13,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+
+import static util.Utils.streamer;
 
 
 public class Controller {
@@ -165,6 +166,22 @@ public class Controller {
         }
     }
 
+    public String saisieFlux() {
+        while (true) {
+            try {
+                String n = saisieStr("Nom du flux : ");
+
+                if (!n.matches("[A-Za-z0-9_-]+")) {
+                    throw new SaisieInvalideException("Le nom ne doit contenir que des lettres, des chiffres, '-' ou '_'.");
+                }
+
+                return n;
+            } catch (SaisieInvalideException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
     public void ajouterVideo() throws SaisieInvalideException, VideoDejaExistanteException {
         int support = saisieSupport();
         String titre = saisieStr("Titre : ");
@@ -254,52 +271,31 @@ public class Controller {
         videotheque.supprimerVideo(titre);
     }
 
-    public String saisieFlux() {
-        while (true) {
-            try {
-                String n = saisieStr("Nom du flux : ");
-
-                if (!n.matches("[A-Za-z0-9_-]+")) {
-                    throw new SaisieInvalideException("Le nom ne doit contenir que des lettres, des chiffres, '-' ou '_'.");
-                }
-
-                return n;
-            } catch (SaisieInvalideException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
-    }
-
     public void diffuserVideo() throws
             VideothequeVideException, VideoIntrouvableException, SaisieInvalideException, IOException, StreamingException {
 
         String n = saisieStr("Titre de la vidéo : ");
         Video v = videotheque.rechercherVideo(n);
-        String nomFlux = null;
-        Boolean boucle = null;
+        String nomFlux;
+        boolean boucle;
 
         if (!(v instanceof FichierVideo)) System.out.println("La vidéo doit-être un fichier numérique !");
         else {
             nomFlux = saisieFlux();
             boucle = saisieStr("Activer le bouclage ? (y/n) : ").equals("y");
-            Utils.streamer.diffuserFichier((FichierVideo) v, nomFlux, boucle);
-            System.out.println(">> Diffusion lancée <<");
-            System.out.println(Utils.streamer.getUrlLecture()); //
+            streamer.diffuserFichier((FichierVideo) v, nomFlux, boucle);
+            System.out.println(">> Diffusion lancée à : " + streamer.getUrlLecture() + " <<");
         }
     }
 
     public void diffuserCamera() throws SaisieInvalideException, IOException {
-
         String nomFlux = saisieFlux();
-        Utils.streamer.diffuserCamera(nomFlux);
-
+        streamer.diffuserCamera(nomFlux);
+        System.out.println(">> Diffusion de la webcam lancée à : " + streamer.getUrlLecture() + " <<");
     }
 
     public void arreterDiffusion() throws IOException, InterruptedException {
-
-        if (Utils.streamer.estEnCours()) Utils.streamer.arreter();
+        if (streamer.estEnCours()) streamer.arreter();
         else System.out.println("Aucun flux en cours de diffusion");
-
     }
 }
