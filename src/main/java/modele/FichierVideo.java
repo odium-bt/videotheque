@@ -12,9 +12,9 @@ import java.util.List;
 
 public abstract class FichierVideo extends Video implements Convertible, Runnable {
     private String nomFichier;
-    private int taille;
+    private double taille;
 
-    public FichierVideo(String titre, String realisateur, LocalDate dateSortie, int duree, String nomFichier, int taille) {
+    public FichierVideo(String titre, String realisateur, LocalDate dateSortie, int duree, String nomFichier, double taille) {
         super(titre, realisateur, dateSortie, duree);
         this.nomFichier = nomFichier;
         this.taille = taille;
@@ -28,7 +28,7 @@ public abstract class FichierVideo extends Video implements Convertible, Runnabl
         this.nomFichier = nomFichier;
     }
 
-    public int getTaille() {
+    public double getTaille() {
         return taille;
     }
 

@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class VideoAvi extends FichierVideo {
-    public VideoAvi(String titre, String realisateur, LocalDate dateSortie, int duree, String nomFichier, int taille) {
+    public VideoAvi(String titre, String realisateur, LocalDate dateSortie, int duree, String nomFichier, double taille) {
         super(titre, realisateur, dateSortie, duree, nomFichier, taille);
     }
 
