@@ -29,7 +29,7 @@ public class Streamer {
         if (estEnCours()) {
             throw new StreamingException("Une diffusion est déjà en cours !");
         }
-        this.fluxEnCours=nomFlux;
+        this.fluxEnCours = nomFlux;
         List<String> commande = new ArrayList<>();
 
         commande.add("ffmpeg");
@@ -43,16 +43,16 @@ public class Streamer {
         commande.addAll(video.getOptionsStreaming());
         commande.addAll(optionsSortie(nomFlux));
 
-        lancer(commande,nomFlux);
+        lancer(commande, nomFlux);
     }
 
     /**
      * ffmpeg <entrée caméra selon le système> <encodage direct> <sortie>
      */
     public void diffuserCamera(String nomFlux)
-            throws StreamingException, SaisieInvalideException, IOException {
+            throws StreamingException, IOException {
 
-        List<String> commande = List.of();
+        List<String> commande = new ArrayList<>(List.of());
         commande.add("ffmpeg");
         commande.addAll(optionsCamera());
         commande.addAll(List.of(
@@ -75,7 +75,7 @@ public class Streamer {
 
         commande.addAll(optionsSortie(nomFlux));
 
-        lancer(commande,nomFlux);
+        lancer(commande, nomFlux);
     }
 
     /**
@@ -101,37 +101,33 @@ public class Streamer {
     /**
      * URL à donner aux spectateurs, ex. rtsp://.../film
      */
-    public String getUrlLecture() { /* TODO */
-        return urlServeur+"/"+fluxEnCours;
+    public String getUrlLecture() {
+        return urlServeur + "/" + fluxEnCours;
     }
 
     /**
      * -f rtsp -rtsp_transport tcp rtsp://serveur:8554/nomFlux
      */
-    private List<String> optionsSortie(String nomFlux) { /* TODO */
+    private List<String> optionsSortie(String nomFlux) {
 
         return List.of("-f", "rtsp",
                 "-rtsp_transport", "tcp",
-                this.urlServeur+"/"+nomFlux);
+                this.urlServeur + "/" + nomFlux);
 
     }
 
     /**
      * Entrée caméra : dshow, v4l2 ou avfoundation selon os.name
      */
-    private List<String> optionsCamera() { /* TODO */
+    private List<String> optionsCamera() {
         String os = System.getProperty("os.name");
         os = os.split(" ")[0].toLowerCase();
-        switch(os){
-            case "windows":
-                return List.of("-f", "dshow","-rtbufsize", "100M");
-            case "linux":
-                return List.of("-f","v4l2","-framerate","30");
-            case "mac":
-                return List.of("-f","avfoundation","-framerate","30");
-            default:
-                throw new UnsupportedOperationException();
-        }
+        return switch (os) {
+            case "windows" -> List.of("-f", "dshow", "-rtbufsize", "100M");
+            case "linux" -> List.of("-f", "v4l2", "-framerate", "30");
+            case "mac" -> List.of("-f", "avfoundation", "-framerate", "30");
+            default -> throw new UnsupportedOperationException();
+        };
     }
 
     /**
