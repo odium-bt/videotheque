@@ -9,7 +9,7 @@ public final class Ffmpeg {
     private Ffmpeg() {
     } // classe utilitaire : aucune instance
 
-    public static int lire(File fichier, String titreFenetre) throws IOException, InterruptedException {
+    public static void lire(File fichier, String titreFenetre) throws IOException, InterruptedException {
         List<String> commande = new ArrayList<>();
 
         commande.add("ffplay");
@@ -25,7 +25,7 @@ public final class Ffmpeg {
 
         Process processus = pb.start();
 
-        return processus.waitFor(); // attend la fin de ffmplay
+        processus.waitFor();
     }
 
     /**
