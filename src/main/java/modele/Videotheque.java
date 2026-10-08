@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Videotheque implements GestionVideotheque {
-    private ArrayList<Video> videos = new ArrayList<>();
+    private final ArrayList<Video> videos = new ArrayList<>();
 
     public Videotheque() {
     }
@@ -74,7 +74,7 @@ public class Videotheque implements GestionVideotheque {
             LectureImpossibleException {
         Video video = rechercherVideo(titre);
         if (video instanceof FichierVideo) {
-            ((FichierVideo) video).lire();
+            video.lire();
         } else {
             throw new LectureImpossibleException("Cette vidéo n'est pas un fichier");
         }
@@ -88,8 +88,7 @@ public class Videotheque implements GestionVideotheque {
         if (v == null) {
             throw new ConversionImpossibleException("Conversion impossible");
         }
-        Convertible c = v;
-        FichierVideo fv = c.convertir(formatCible);
+        FichierVideo fv = v.convertir(formatCible);
         int index = videos.indexOf(v);
         videos.set(index, fv);
         return fv;
