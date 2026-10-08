@@ -5,7 +5,6 @@ import modele.*;
 import modele.FichierVideo;
 
 import modele.Videotheque;
-import outils.Streamer;
 import util.Utils;
 
 import java.io.File;
@@ -17,7 +16,6 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 
-
 public class Controller {
     static Scanner scan = new Scanner(System.in);
     private final Videotheque videotheque = new Videotheque();
@@ -26,33 +24,37 @@ public class Controller {
      * Affiche le menu principal
      */
     public int afficherMenu() {
-        System.out.println("========== VIDÉOTHÈQUE ==========");
-        System.out.println("1. Ajouter une vidéo");
-        System.out.println("2. Lister toutes les vidéos");
-        System.out.println("3. Rechercher une vidéo");
-        System.out.println("4. Supprimer une vidéo");
-        System.out.println("5. Lire une vidéo");
-        System.out.println("6. Convertir une vidéo");
-        System.out.println("7. Diffuser une vidéo en streaming");
-        System.out.println("8. Diffuser la caméra du laptop");
-        System.out.println("9. Arrêter la diffusion");
-        System.out.println("0. Quitter");
-        System.out.println("=================================");
-        System.out.print("Votre choix : ");
-        try {
-            return Controller.scan.nextInt();
-        } catch (InputMismatchException e) {
-            System.out.println("Veuillez entrer le numéro d'une des options données.");
-            scan.nextLine();
-            return afficherMenu();
+        while (true) {
+            System.out.println("========== VIDÉOTHÈQUE ==========");
+            System.out.println("1. Ajouter une vidéo");
+            System.out.println("2. Lister toutes les vidéos");
+            System.out.println("3. Rechercher une vidéo");
+            System.out.println("4. Supprimer une vidéo");
+            System.out.println("5. Lire une vidéo");
+            System.out.println("6. Convertir une vidéo");
+            System.out.println("7. Diffuser une vidéo en streaming");
+            System.out.println("8. Diffuser la caméra du laptop");
+            System.out.println("9. Arrêter la diffusion");
+            System.out.println("0. Quitter");
+            System.out.println("=================================");
+            System.out.print("Votre choix : ");
+            try {
+                int choix = scan.nextInt();
+                scan.nextLine(); // Vidage du buffer
+                return choix;
+            } catch (InputMismatchException e) {
+                System.out.println("Veuillez entrer le numéro d'une des options données.");
+                scan.nextLine();
+            }
         }
     }
 
     /**
      * Demande à l'utilisateur de saisir une chaine de caractère
+     *
      * @param msg le message affiché à l'utilisateur
      * @return String s la saisie de l'utilisateur
-     * @throws SaisieInvalideException
+     * @throws SaisieInvalideException Jette une exception si l'utilisateur ne rentre rien
      */
     public String saisieStr(String msg) throws SaisieInvalideException {
         String s;
@@ -66,61 +68,70 @@ public class Controller {
 
     private int saisieInt(String msg) throws SaisieInvalideException {
         int s;
-        System.out.print(msg);
-        try {
-            s = scan.nextInt();
-            scan.nextLine();
-        } catch (InputMismatchException e) {
-            System.out.println("Donnée invalide, veuillez entrer un chiffre.");
-            scan.nextLine();
-            return saisieInt(msg);
+        while (true) {
+            System.out.print(msg);
+            try {
+                try {
+                    s = scan.nextInt();
+                    scan.nextLine();
+                } catch (InputMismatchException e) {
+                    scan.nextLine();
+                    throw new SaisieInvalideException("Donnée invalide, veuillez entrer un chiffre.");
+                }
+                if (s < 0) {
+                    throw new SaisieInvalideException("La donnée entrée est invalide !");
+                }
+                return s;
+            } catch (SaisieInvalideException e) {
+                System.out.println(e.getMessage());
+            }
         }
-        if (s < 0) {
-            throw new SaisieInvalideException("La donnée entrée est invalide !");
-        }
-        return s;
     }
 
     private double saisieTailleD() throws SaisieInvalideException {
         double s;
-        System.out.print("Taille du fichier (en Mo) : ");
-        try {
-            s = scan.nextDouble();
-            scan.nextLine();
-        } catch (InputMismatchException e) {
-            System.out.println("Merci d'entrer une taille valide (exemple : 34.5)");
-            scan.nextLine();
-            return saisieTailleD();
+        while (true) {
+            System.out.print("Taille du fichier (en Mo) : ");
+            try {
+                try {
+                    s = scan.nextDouble();
+                    scan.nextLine();
+                } catch (InputMismatchException e) {
+                    scan.nextLine();
+                    throw new SaisieInvalideException("Merci d'entrer une taille valide (exemple : 34.5)");
+                }
+                if (s <= 0) {
+                    throw new SaisieInvalideException("La taille du fichier doit être supérieure à 0.");
+                }
+                return s;
+            } catch (SaisieInvalideException e) {
+                System.out.println(e.getMessage());
+            }
         }
-        if (s <= 0) {
-            throw new SaisieInvalideException("La taille du fichier doit être supérieure à 0.");
-        }
-        return s;
     }
 
     public LocalDate saisieDate() throws SaisieInvalideException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate date;
-        String dateD = saisieStr("Date de sortie (jj/mm/aaaa) : ");
-        try {
-            date = LocalDate.parse(dateD, formatter);
-        } catch (DateTimeParseException e) {
-            System.out.println("Format invalide. Exemple : 22/09/2026");
-            return saisieDate();
+        while (true) {
+            try {
+                String dateD = saisieStr("Date de sortie (jj/mm/aaaa) : ");
+                try {
+                    date = LocalDate.parse(dateD, formatter);
+                } catch (DateTimeParseException e) {
+                    throw new SaisieInvalideException("Format invalide. Exemple : 22/09/2026");
+                }
+                if (date.isBefore(LocalDate.of(1946, 1, 1))) {
+                    throw new SaisieInvalideException("La date entrée ne peut pas être trop vieille (entrez une date après 1946).");
+                }
+                if (date.isAfter(LocalDate.now())) {
+                    throw new SaisieInvalideException("La date entrée ne peut pas être plus tard que la date actuelle.");
+                }
+                return date;
+            } catch (SaisieInvalideException e) {
+                System.out.println(e.getMessage());
+            }
         }
-        if (date.isBefore(LocalDate.of(1946, 1, 1))) {
-            System.out.println("La date entrée ne peut pas être trop vieille (entrez une date après 1946).");
-            return saisieDate();
-        }
-        if (date.isAfter(LocalDate.now())) {
-            System.out.println("La date entrée ne peut pas être plus tard que la date actuelle.");
-            return saisieDate();
-        }
-        return date;
-    }
-
-    public String saisieNum() throws SaisieInvalideException {
-        return saisieStr("Numéro de la vidéo : ");
     }
 
     public int saisieDuree() throws SaisieInvalideException {
@@ -129,21 +140,29 @@ public class Controller {
 
 
     public int saisieSupport() throws SaisieInvalideException {
-        int s = saisieInt("Support (1 = DVD, 2 = fichier MP4, 3 = fichier AVI) : ");
-        if (s >= 1 && s <= 3) {
-            return s;
-        } else {
-            throw new SaisieInvalideException("Veuillez choisir une des options proposées.");
+        while (true) {
+            int s = saisieInt("Support (1 = DVD, 2 = fichier MP4, 3 = fichier AVI) : ");
+
+            if (s >= 1 && s <= 3) {
+                return s;
+            }
+
+            System.out.println("Veuillez choisir une des options proposées.");
         }
     }
 
-    public String saisieFormat(String msg) throws SaisieInvalideException {
-        String f = saisieStr(msg).toLowerCase();
-        if (!f.equals("mp4") && !f.equals("avi")) {
-            System.out.println("Format entré invalide.");
-            f = saisieFormat(msg);
+    public String saisieFormat(String msg) {
+        while (true) {
+            try {
+                String f = saisieStr(msg).toLowerCase();
+                if (!f.equals("mp4") && !f.equals("avi")) {
+                    throw new SaisieInvalideException("Format entré invalide.");
+                }
+                return f;
+            } catch (SaisieInvalideException e) {
+                System.out.println(e.getMessage());
+            }
         }
-        return f;
     }
 
     public void ajouterVideo() throws SaisieInvalideException, VideoDejaExistanteException {
@@ -155,7 +174,7 @@ public class Controller {
 
         // Spécifique aux fichiers
         String chemin;
-        int taille;
+        double taille;
 
         Video v;
         boolean valid = false;
@@ -175,7 +194,7 @@ public class Controller {
                         System.out.println("Fichier introuvable, veuillez ré-essayer");
                     }
                 } while (!valid);
-                taille = saisieInt("Taille (Mb) : ");
+                taille = saisieTailleD();
                 v = new VideoMp4(titre, auteur, date, duree, chemin, taille);
                 break;
             case 3:
@@ -205,13 +224,15 @@ public class Controller {
         }
     }
 
-    public void rechercherVideo() throws VideoIntrouvableException, VideothequeVideException, SaisieInvalideException {
+    public void rechercherVideo() throws
+            VideoIntrouvableException, VideothequeVideException, SaisieInvalideException {
         String titre = saisieStr("Titre de la vidéo : ");
         Video v = videotheque.rechercherVideo(titre);
         System.out.println(v.toString());
     }
 
-    public void convertirVideo() throws SaisieInvalideException, VideothequeVideException, VideoIntrouvableException, IOException, InterruptedException {
+    public void convertirVideo() throws
+            SaisieInvalideException, VideothequeVideException, VideoIntrouvableException, IOException, InterruptedException {
         String titre = saisieStr("Titre de la vidéo à convertir : ");
         String format = saisieFormat("Format cible (MP4, AVI) : ");
 
@@ -227,23 +248,42 @@ public class Controller {
         videotheque.lireVideo(saisieStr("Titre : "));
     }
 
-    public void supprimerVideo() throws VideoIntrouvableException, VideothequeVideException, SaisieInvalideException {
+    public void supprimerVideo() throws
+            VideoIntrouvableException, VideothequeVideException, SaisieInvalideException {
         String titre = saisieStr("Titre de la vidéo : ");
         videotheque.supprimerVideo(titre);
     }
 
-    public void diffuserVideo() throws VideothequeVideException, VideoIntrouvableException, SaisieInvalideException, IOException, StreamingException {
+    public String saisieFlux() {
+        while (true) {
+            try {
+                String n = saisieStr("Nom du flux : ");
+
+                if (!n.matches("[A-Za-z0-9_-]+")) {
+                    throw new SaisieInvalideException("Le nom ne doit contenir que des lettres, des chiffres, '-' ou '_'.");
+                }
+
+                return n;
+            } catch (SaisieInvalideException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+    }
+
+    public void diffuserVideo() throws
+            VideothequeVideException, VideoIntrouvableException, SaisieInvalideException, IOException, StreamingException {
 
         String n = saisieStr("Titre de la vidéo : ");
         Video v = videotheque.rechercherVideo(n);
         String nomFlux = null;
         Boolean boucle = null;
 
-        if(!(v instanceof FichierVideo)) System.out.println("La vidéo doit-être un fichier numérique !");
-        else{
-            nomFlux = saisieStr("Nom du flux : ");
+        if (!(v instanceof FichierVideo)) System.out.println("La vidéo doit-être un fichier numérique !");
+        else {
+            nomFlux = saisieFlux();
             boucle = saisieStr("Activer le bouclage ? (y/n) : ").equals("y");
-            Utils.streamer.diffuserFichier((FichierVideo) v,nomFlux,boucle);
+            Utils.streamer.diffuserFichier((FichierVideo) v, nomFlux, boucle);
             System.out.println(">> Diffusion lancée <<");
             System.out.println(Utils.streamer.getUrlLecture()); //
         }
@@ -251,14 +291,14 @@ public class Controller {
 
     public void diffuserCamera() throws SaisieInvalideException, IOException {
 
-        String nomFlux = saisieStr("Nom du flux : ");
+        String nomFlux = saisieFlux();
         Utils.streamer.diffuserCamera(nomFlux);
 
     }
 
     public void arreterDiffusion() throws IOException, InterruptedException {
 
-        if(Utils.streamer.estEnCours()) Utils.streamer.arreter();
+        if (Utils.streamer.estEnCours()) Utils.streamer.arreter();
         else System.out.println("Aucun flux en cours de diffusion");
 
     }
