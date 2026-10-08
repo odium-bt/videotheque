@@ -1,6 +1,5 @@
 package outils;
 
-import exceptions.SaisieInvalideException;
 import exceptions.StreamingException;
 import modele.FichierVideo;
 
@@ -13,6 +12,7 @@ public class Streamer {
     private final String urlServeur; // ex. "rtsp://192.168.1.50:8554"
     private volatile Process processus; // ffmpeg en cours (partagé entre threads)
     private String fluxEnCours; // Nom du chemin diffusé, ex. "film"
+    boolean estEnPause;
 
     public Streamer(String urlServeur) {
         this.urlServeur = urlServeur;
@@ -21,12 +21,12 @@ public class Streamer {
     /**
      * ffmpeg -re [-stream_loop -1] -i fichier <options du format> <sortie>
      */
-    public void diffuserFichier(FichierVideo video, String nomFlux, boolean boucle)
-            throws StreamingException, SaisieInvalideException, IOException {
+    public void diffuserFichier(FichierVideo video, String nomFlux, boolean boucle) throws StreamingException, IOException {
         if (estEnCours()) {
             throw new StreamingException("Une diffusion est déjà en cours !");
         }
         this.fluxEnCours = nomFlux;
+
         List<String> commande = new ArrayList<>();
 
         commande.add("ffmpeg");
@@ -48,15 +48,19 @@ public class Streamer {
      */
     public void diffuserCamera(String nomFlux)
             throws StreamingException, IOException {
+        if (estEnCours()) {
+            throw new StreamingException("Une diffusion est déjà en cours !");
+        }
+        this.fluxEnCours = nomFlux;
 
-        List<String> commande = new ArrayList<>(List.of());
+        List<String> commande = new ArrayList<>();
+
         commande.add("ffmpeg");
         commande.addAll(optionsCamera());
         commande.addAll(List.of(
-
                 "-video_size", "1280x720",
                 "-framerate", "30",
-                "-i", "video=Integrated Camera:audio=Microphone (Realtek(R) Audio)",
+                "-i", "video=HP TrueVision HD Camera:audio=Réseau de microphones (Technologie Intel® Smart Sound pour microphones numériques)",
                 "-c:v", "libx264",
                 "-preset", "ultrafast",
                 "-tune", "zerolatency",
@@ -69,7 +73,6 @@ public class Streamer {
                 "-b:a", "128k",
                 "-ar", "44100"
         ));
-
         commande.addAll(optionsSortie(nomFlux));
 
         lancer(commande, nomFlux);
@@ -89,7 +92,6 @@ public class Streamer {
             }
         }
     }
-
 
     public boolean estEnCours() {
         return processus != null && processus.isAlive();
