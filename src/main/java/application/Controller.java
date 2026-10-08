@@ -242,7 +242,7 @@ public class Controller {
         if(!(v instanceof FichierVideo)) System.out.println("La vidéo doit-être un fichier numérique !");
         else{
             nomFlux = saisieStr("Nom du flux : ");
-            boucle = (saisieStr("Activre le bouclage ? (y/n) : ").equals("y")) ? true : false;
+            boucle = saisieStr("Activer le bouclage ? (y/n) : ").equals("y");
             Utils.streamer.diffuserFichier((FichierVideo) v,nomFlux,boucle);
             System.out.println(">> Diffusion lancée <<");
             System.out.println(Utils.streamer.getUrlLecture()); //
