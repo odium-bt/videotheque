@@ -39,7 +39,7 @@ public class Streamer {
             commande.add("-1");
         }
         commande.add("-i");
-        commande.add(video.getFichier().getAbsolutePath());
+        commande.add(video.getFichier().getPath());//getAbsolutePath()
         commande.addAll(video.getOptionsStreaming());
         commande.addAll(optionsSortie(nomFlux));
 
