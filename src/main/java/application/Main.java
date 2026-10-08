@@ -16,7 +16,6 @@ public class Main {
         do {
             try {
                 choix = c.afficherMenu();
-                scan.nextLine();
                 switch (choix) {
                     case 1:
                         c.ajouterVideo();
@@ -53,10 +52,8 @@ public class Main {
                         System.out.println("Choix invalide, veuillez réessayer.");
                 }
             } catch (SaisieInvalideException | VideoDejaExistanteException | VideothequeVideException |
-                     VideoIntrouvableException e) {
-                System.err.println(e.getMessage());
-            } catch (StreamingException | IOException | InterruptedException e) {
-                System.err.println(e.getMessage());
+                     VideoIntrouvableException | StreamingException | IOException | InterruptedException e) {
+                System.out.println(e.getMessage());
             }
         } while (choix != 0);
 
