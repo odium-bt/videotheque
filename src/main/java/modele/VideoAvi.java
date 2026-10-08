@@ -1,9 +1,5 @@
 package modele;
 
-import exceptions.ConversionImpossibleException;
-import exceptions.LectureImpossibleException;
-import exceptions.SaisieInvalideException;
-
 import java.time.LocalDate;
 import java.util.List;
 
