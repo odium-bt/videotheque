@@ -12,7 +12,6 @@ public class Streamer {
     private final String urlServeur; // ex. "rtsp://192.168.1.50:8554"
     private volatile Process processus; // ffmpeg en cours (partagé entre threads)
     private String fluxEnCours; // Nom du chemin diffusé, ex. "film"
-    boolean estEnPause;
 
     public Streamer(String urlServeur) {
         this.urlServeur = urlServeur;
@@ -134,13 +133,9 @@ public class Streamer {
      */
     private void lancer(List<String> commande, String nomFlux)
             throws StreamingException, IOException {
-
-        ProcessBuilder pb = new ProcessBuilder(commande);
-
-        pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
-        pb.redirectError(ProcessBuilder.Redirect.DISCARD);
-
-        this.processus = pb.start();
-
+        processus = new ProcessBuilder(commande)
+                .redirectOutput(ProcessBuilder.Redirect.DISCARD)
+                .redirectError(ProcessBuilder.Redirect.DISCARD)
+                .start();
     }
 }
