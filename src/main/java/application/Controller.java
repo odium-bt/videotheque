@@ -16,13 +16,14 @@ import java.util.Scanner;
 
 import static util.Utils.streamer;
 
-
 public class Controller {
     static Scanner scan = new Scanner(System.in);
     private final Videotheque videotheque = new Videotheque();
 
     /**
      * Affiche le menu principal
+     *
+     * @return int | Choix de l'utilisateur
      */
     public int afficherMenu() {
         while (true) {
@@ -53,21 +54,32 @@ public class Controller {
     /**
      * Demande à l'utilisateur de saisir une chaine de caractère
      *
-     * @param msg le message affiché à l'utilisateur
-     * @return String s la saisie de l'utilisateur
-     * @throws SaisieInvalideException Jette une exception si l'utilisateur ne rentre rien
+     * @param msg Le message affiché à l'utilisateur
+     * @return String | La saisie de l'utilisateur
      */
-    public String saisieStr(String msg) throws SaisieInvalideException {
+    public String saisieStr(String msg) {
         String s;
-        System.out.print(msg);
-        s = scan.nextLine();
-        if (s.isEmpty()) {
-            throw new SaisieInvalideException("La donnée entrée est invalide !");
+        while (true) {
+            System.out.print(msg);
+            try {
+                s = scan.nextLine();
+                if (s.isEmpty()) {
+                    throw new SaisieInvalideException("La donnée entrée est invalide !");
+                }
+                return s;
+            } catch (SaisieInvalideException e) {
+                System.out.println(e.getMessage());
+            }
         }
-        return s;
     }
 
-    private int saisieInt(String msg) throws SaisieInvalideException {
+    /**
+     * Demande à l'utilisateur de saisir un nombre
+     *
+     * @param msg Le message affiché à l'utilisateur
+     * @return int | La saisie de l'utilisateur
+     */
+    private int saisieInt(String msg) {
         int s;
         while (true) {
             System.out.print(msg);
@@ -89,7 +101,12 @@ public class Controller {
         }
     }
 
-    private double saisieTailleD() throws SaisieInvalideException {
+    /**
+     * Demande à l'utilisateur de saisir un nombre décimal
+     *
+     * @return double | Un nombre décimal supérieur à zéro
+     */
+    private double saisieTailleD() {
         double s;
         while (true) {
             System.out.print("Taille du fichier (en Mo) : ");
@@ -111,7 +128,12 @@ public class Controller {
         }
     }
 
-    public LocalDate saisieDate() throws SaisieInvalideException {
+    /**
+     * Demande à l'utilisateur de saisir une date
+     *
+     * @return LocalDate | Une date valide plus tard que 1945 et plus tôt que la date actuelle
+     */
+    public LocalDate saisieDate() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate date;
         while (true) {
@@ -135,12 +157,21 @@ public class Controller {
         }
     }
 
-    public int saisieDuree() throws SaisieInvalideException {
+    /**
+     * Demande à l'utilisateur de saisir la durée de la vidéo en minutes
+     *
+     * @return int
+     */
+    public int saisieDuree() {
         return saisieInt("Durée (minutes) : ");
     }
 
-
-    public int saisieSupport() throws SaisieInvalideException {
+    /**
+     * Demande à l'utilisateur de saisir un support vidéo
+     *
+     * @return int | 1 pour DVD, 2 pour fichier mp4, 3 pour fichier avi
+     */
+    public int saisieSupport() {
         while (true) {
             int s = saisieInt("Support (1 = DVD, 2 = fichier MP4, 3 = fichier AVI) : ");
 
@@ -152,10 +183,15 @@ public class Controller {
         }
     }
 
-    public String saisieFormat(String msg) {
+    /**
+     * Demande à l'utilisateur de saisir un format de fichier vidéo
+     *
+     * @return String | "mp4" ou "avi"
+     */
+    public String saisieFormat() {
         while (true) {
             try {
-                String f = saisieStr(msg).toLowerCase();
+                String f = saisieStr("Format cible (MP4, AVI) : ").toLowerCase();
                 if (!f.equals("mp4") && !f.equals("avi")) {
                     throw new SaisieInvalideException("Format entré invalide.");
                 }
@@ -166,6 +202,11 @@ public class Controller {
         }
     }
 
+    /**
+     * Demande à l'utilisateur de saisir un nom pour le flux
+     *
+     * @return String | Un nom de flux valide
+     */
     public String saisieFlux() {
         while (true) {
             try {
@@ -182,6 +223,9 @@ public class Controller {
         }
     }
 
+    /**
+     * Ajout d'une vidéo
+     */
     public void ajouterVideo() throws SaisieInvalideException, VideoDejaExistanteException {
         int support = saisieSupport();
         String titre = saisieStr("Titre : ");
@@ -233,6 +277,9 @@ public class Controller {
         videotheque.ajouterVideo(v);
     }
 
+    /**
+     * Listage de toutes les vidéos dans la vidéothèque
+     */
     public void listerVideos() throws VideothequeVideException {
         try {
             videotheque.listerVideos();
@@ -241,6 +288,9 @@ public class Controller {
         }
     }
 
+    /**
+     * Recherche d'une vidéo spécifique par son titre
+     */
     public void rechercherVideo() throws
             VideoIntrouvableException, VideothequeVideException, SaisieInvalideException {
         String titre = saisieStr("Titre de la vidéo : ");
@@ -248,10 +298,13 @@ public class Controller {
         System.out.println(v.toString());
     }
 
+    /**
+     * Tente de convertir la vidéo au format choisi
+     */
     public void convertirVideo() throws
             SaisieInvalideException, VideothequeVideException, VideoIntrouvableException, IOException, InterruptedException {
         String titre = saisieStr("Titre de la vidéo à convertir : ");
-        String format = saisieFormat("Format cible (MP4, AVI) : ");
+        String format = saisieFormat();
 
         Video v = videotheque.rechercherVideo(titre);
         if (v instanceof FichierVideo) {
@@ -261,16 +314,25 @@ public class Controller {
         }
     }
 
+    /**
+     * Tente de lire la vidéo choisie
+     */
     public void lireVideo() throws SaisieInvalideException, VideothequeVideException, VideoIntrouvableException {
         videotheque.lireVideo(saisieStr("Titre : "));
     }
 
+    /**
+     * Tente de supprimer la vidéo choisie
+     */
     public void supprimerVideo() throws
             VideoIntrouvableException, VideothequeVideException, SaisieInvalideException {
         String titre = saisieStr("Titre de la vidéo : ");
         videotheque.supprimerVideo(titre);
     }
 
+    /**
+     * Tente de diffuser la vidéo choisie
+     */
     public void diffuserVideo() throws
             VideothequeVideException, VideoIntrouvableException, SaisieInvalideException, IOException, StreamingException {
 
@@ -288,12 +350,18 @@ public class Controller {
         }
     }
 
+    /**
+     * Tente de diffuser le flux de la webcam et du microphone
+     */
     public void diffuserCamera() throws SaisieInvalideException, IOException {
         String nomFlux = saisieFlux();
         streamer.diffuserCamera(nomFlux);
         System.out.println(">> Diffusion de la webcam lancée à : " + streamer.getUrlLecture() + " <<");
     }
 
+    /**
+     * Tente d'arrêter la diffusion
+     */
     public void arreterDiffusion() throws IOException, InterruptedException {
         if (streamer.estEnCours()) streamer.arreter();
         else System.out.println("Aucun flux en cours de diffusion");

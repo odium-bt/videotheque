@@ -18,7 +18,12 @@ public class Streamer {
     }
 
     /**
-     * ffmpeg -re [-stream_loop -1] -i fichier <options du format> <sortie>
+     * Tente de diffuser le fichier vidéo sur un serveur distant </br>
+     * ffmpeg -re [-stream_loop -1] -i fichier [options du format] [sortie]
+     *
+     * @param video   La vidéo à diffuser
+     * @param nomFlux Le nom du flux
+     * @param boucle  Booléen indiquant si la vidéo doit être lue en boucle
      */
     public void diffuserFichier(FichierVideo video, String nomFlux, boolean boucle) throws StreamingException, IOException {
         if (estEnCours()) {
@@ -43,7 +48,10 @@ public class Streamer {
     }
 
     /**
-     * ffmpeg <entrée caméra selon le système> <encodage direct> <sortie>
+     * Diffusion du flux de la webcam + microphone du système </br>
+     * ffmpeg [entrée caméra selon le système] [encodage direct] [sortie]
+     *
+     * @param nomFlux Nom du flux sur le serveur de diffusion, défini par l'utilisateur
      */
     public void diffuserCamera(String nomFlux)
             throws StreamingException, IOException {
@@ -78,6 +86,8 @@ public class Streamer {
     }
 
     /**
+     * Tente d'arrêter la diffusion
+     * <p>
      * Arrête proprement ffmpeg : envoie "q" sur son entrée standard,
      * attend 5 s au maximum, sinon destroy().
      */
@@ -92,11 +102,15 @@ public class Streamer {
         }
     }
 
+    /**
+     * Indique si un processus est en cours
+     */
     public boolean estEnCours() {
         return processus != null && processus.isAlive();
     }
 
     /**
+     * Indique l'url rtsp de la diffusion </br>
      * URL à donner aux spectateurs, ex. rtsp://.../film
      */
     public String getUrlLecture() {
@@ -104,17 +118,17 @@ public class Streamer {
     }
 
     /**
+     * Indique une liste des options de sortie </br>
      * -f rtsp -rtsp_transport tcp rtsp://serveur:8554/nomFlux
      */
     private List<String> optionsSortie(String nomFlux) {
-
         return List.of("-f", "rtsp",
                 "-rtsp_transport", "tcp",
                 this.urlServeur + "/" + nomFlux);
-
     }
 
     /**
+     * Indique une liste des options caméra </br>
      * Entrée caméra : dshow, v4l2 ou avfoundation selon os.name
      */
     private List<String> optionsCamera() {
