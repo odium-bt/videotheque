@@ -23,9 +23,6 @@ public class Streamer {
      */
     public void diffuserFichier(FichierVideo video, String nomFlux, boolean boucle)
             throws StreamingException, SaisieInvalideException, IOException {
-        if (!nomFlux.matches("[A-Za-z0-9_-]+")) {
-            throw new SaisieInvalideException("Le nom ne doit contenir que des lettres, des chiffres, - ou _");
-        }
         if (estEnCours()) {
             throw new StreamingException("Une diffusion est déjà en cours !");
         }
